@@ -4,9 +4,9 @@
 
 ## 团队成员
 
-孙铭（email: MING005@e.ntu.edu.sg, StudentID: G2509034C）
+孙铭（Email: MING005@e.ntu.edu.sg, StudentID: G2509034C）
 
-高放
+高放（Email: FANG014@e.ntu.edu.sg, StudentID: G2509276D）
 
 ## 数据集
 
