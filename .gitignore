@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Data and artifacts
+data/processed/
+data/index/
+
+# Streamlit
+.streamlit/
+
