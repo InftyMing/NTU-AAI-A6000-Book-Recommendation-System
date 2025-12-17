@@ -77,11 +77,18 @@ streamlit run app.py
 ```
 功能：
 - 检索模式：语义 / BM25 / 混合，可调混合权重。  
+    <img src="./pic/1.png" alt="1" style="zoom:40%;" />
 - 自然语言搜索示例：“想看一本关于吸血鬼和校园恋爱的书”。  
+    <img src="./pic/2.png" alt="2" style="zoom:40%;" />
 - 选书找相似：从书单（前 2000 条示例）选择一本，找相似书。  
+    <img src="./pic/3.png" alt="3" style="zoom:40%;" />
 - 展示：标题、作者、类别、相似度、简介摘要。
+    <img src="./pic/4.png" alt="4" style="zoom:25%;" />
+
+
 
 ## 代码要点
+
 - `src/data_utils.py`：清洗/生成语义文本与类别列表。  
 - `src/embedding_service.py`：SBERT 向量化（延迟导入 torch，避免无关步骤报错）。  
 - `src/index_service.py`：FAISS 归一化 + 内积索引。  
