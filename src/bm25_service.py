@@ -9,7 +9,6 @@ from .data_utils import load_processed
 
 
 def _tokenize(text: str) -> List[str]:
-    # 简单分词：仅保留字母与数字，空白切分
     cleaned = re.sub(r"[^a-zA-Z0-9]+", " ", text.lower())
     return [t for t in cleaned.split() if t]
 
@@ -34,7 +33,6 @@ def load_bm25(path=BM25_PATH) -> BM25Okapi:
 def search_bm25(bm25: BM25Okapi, query: str, top_k: int):
     tokenized_q = _tokenize(query)
     scores = bm25.get_scores(tokenized_q)
-    # 返回 (score, idx)
     ranking = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)[:top_k]
     return ranking
 

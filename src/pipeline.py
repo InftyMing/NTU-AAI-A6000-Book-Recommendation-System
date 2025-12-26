@@ -1,6 +1,10 @@
 import argparse
+import os
 from pathlib import Path
 from typing import Optional
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
 
 import numpy as np
 
@@ -15,50 +19,50 @@ from .index_service import build_index
 
 def run_preprocess(raw_path: Path, output_path: Path):
     df = preprocess_and_save(raw_path, output_path)
-    print(f"预处理完成，保存至 {output_path}，样本数 {len(df)}")
+    print(f"Preprocessing completed, saved to {output_path}, samples: {len(df)}")
     return df
 
 
 def run_embed(processed_path: Path, output_path: Path):
     embeddings = build_embeddings(processed_path, output_path, model_name=config.MODEL_NAME, batch_size=config.BATCH_SIZE)
-    print(f"向量生成完成，shape={embeddings.shape}，保存至 {output_path}")
+    print(f"Embeddings generated, shape={embeddings.shape}, saved to {output_path}")
     return embeddings
 
 
 def run_bm25(df):
     bm25 = build_and_save_bm25(df, output_path=config.BM25_PATH)
-    print(f"BM25 索引完成，保存至 {config.BM25_PATH}")
+    print(f"BM25 index completed, saved to {config.BM25_PATH}")
     return bm25
 
 
 def run_index(embeddings_path: Path, index_path: Path):
     embeddings = load_embeddings(embeddings_path)
     index = build_index(embeddings, index_path)
-    print(f"索引构建完成，保存至 {index_path}，向量数 {index.ntotal}")
+    print(f"Index built, saved to {index_path}, vectors: {index.ntotal}")
     return index
 
 
 def run_eval(processed_path: Path, embeddings: np.ndarray, k: int, sample_size: Optional[int], plot_path: Optional[Path] = None):
     df = load_processed(processed_path)
     metrics = precision_at_k(df, embeddings, k=k, sample_size=sample_size)
-    print("评估指标:", metrics)
+    print("Evaluation metrics:", metrics)
     if plot_path:
         plot_metrics_bar(metrics, plot_path)
-        print(f"评估图表已保存至 {plot_path}")
+        print(f"Evaluation chart saved to {plot_path}")
     return metrics
 
 
 def main():
-    parser = argparse.ArgumentParser(description="书籍推荐管线")
+    parser = argparse.ArgumentParser(description="Book recommendation pipeline")
     parser.add_argument(
         "--step",
         choices=["preprocess", "embed", "index", "bm25", "evaluate", "all"],
         default="all",
-        help="运行阶段",
+        help="Pipeline step",
     )
-    parser.add_argument("--k", type=int, default=config.TOP_K_DEFAULT, help="检索TopK")
-    parser.add_argument("--sample-size", type=int, default=500, help="评估采样量，None 表示全量")
-    parser.add_argument("--plot", type=str, default="docs/metrics.png", help="评估图输出路径，为空则不绘制")
+    parser.add_argument("--k", type=int, default=config.TOP_K_DEFAULT, help="Top-K retrieval")
+    parser.add_argument("--sample-size", type=int, default=500, help="Evaluation sample size, None for full dataset")
+    parser.add_argument("--plot", type=str, default="docs/metrics.png", help="Evaluation plot output path, empty to skip")
     args = parser.parse_args()
 
     if args.step in ("preprocess", "all"):

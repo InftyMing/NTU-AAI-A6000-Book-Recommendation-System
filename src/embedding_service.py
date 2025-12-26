@@ -1,3 +1,7 @@
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OMP_NUM_THREADS"] = "1"
+
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -9,11 +13,14 @@ from .data_utils import load_processed
 
 
 class EmbeddingService:
-    """封装 SBERT 模型的向量化功能。"""
-
     def __init__(self, model_name: str = MODEL_NAME, device: Optional[str] = None):
-        from sentence_transformers import SentenceTransformer  # 延迟导入以避免无关步骤加载 torch
+        import os
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        os.environ["OMP_NUM_THREADS"] = "1"
+        from sentence_transformers import SentenceTransformer
 
+        if device is None:
+            device = "cpu"
         self.model = SentenceTransformer(model_name, device=device)
 
     def encode(self, texts: Iterable[str], batch_size: int = BATCH_SIZE, normalize: bool = True) -> np.ndarray:
@@ -22,6 +29,7 @@ class EmbeddingService:
             batch_size=batch_size,
             normalize_embeddings=normalize,
             show_progress_bar=True,
+            convert_to_numpy=True,
         )
 
 

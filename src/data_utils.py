@@ -8,7 +8,6 @@ from .config import PROCESSED_PATH, RAW_DATA_PATH, ensure_dirs
 
 
 def load_raw(path: Path = RAW_DATA_PATH) -> pd.DataFrame:
-    """读取原始 CSV。"""
     return pd.read_csv(path)
 
 
@@ -21,13 +20,11 @@ def _split_categories(value: Optional[str]) -> List[str]:
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
-    """清洗数据并构造语义文本字段。"""
     work = df.copy()
     work = work.drop_duplicates(subset=["book_id"])
     for col in ["title", "subtitle", "authors", "description", "categories", "search_category"]:
         if col in work.columns:
             work[col] = work[col].fillna("").astype(str).str.strip()
-    # 组合文本：标题、副标题、描述
     work["text"] = work[["title", "subtitle", "description"]].agg(" ".join, axis=1).str.strip()
     work = work[work["text"].str.len() > 50]
 

@@ -3,7 +3,7 @@ import numpy as np
 try:
     import faiss
 except ImportError as exc:
-    raise ImportError("faiss-cpu 未安装，请先安装依赖。") from exc
+    raise ImportError("faiss-cpu is not installed, please install dependencies first.") from exc
 
 from .config import EMBEDDINGS_PATH, INDEX_PATH, TOP_K_DEFAULT
 from .embedding_service import load_embeddings

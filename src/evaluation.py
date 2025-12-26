@@ -22,7 +22,6 @@ def precision_at_k(
     k: int = TOP_K_DEFAULT,
     sample_size: Optional[int] = 500,
 ) -> Dict[str, float]:
-    """使用类别重叠度作为无监督指标的近似精度、召回等。"""
     if sample_size is None or sample_size > len(df):
         sample_size = len(df)
     rng = np.random.default_rng(42)
@@ -46,13 +45,11 @@ def precision_at_k(
             hits += rel
         precisions.append(hits / k if k else 0)
         recalls.append(min(1.0, hits / len(target_cats)) if target_cats else 0)
-        # MRR
         try:
             first_rel = rels.index(1)
             mrrs.append(1 / (first_rel + 1))
         except ValueError:
             mrrs.append(0.0)
-        # nDCG
         dcg = sum(rel / np.log2(rank + 2) for rank, rel in enumerate(rels))
         ideal = sum(1 / np.log2(rank + 2) for rank in range(min(len(target_cats), k))) if target_cats else 0
         ndcgs.append(dcg / ideal if ideal > 0 else 0)
